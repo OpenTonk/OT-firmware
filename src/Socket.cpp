@@ -3,16 +3,21 @@
 #include <WiFiClient.h>
 
 #include "Socket.h"
+#include "MotorControl.h"
 
 int port = 4200;
 int clientCount = 0;
 WiFiServer server(0);
+MotorControl motorController;
 
-bool StartSocketServer()
+bool StartSocketServer(MotorControl controller)
 {
     server.begin(port);
     Serial.print("tcp server listening on ");
     Serial.println(port);
+
+    motorController = controller;
+
     return true;
 }
 
@@ -56,6 +61,7 @@ void SocketLoop()
                     if (strcmp(msg, "stop") == 0)
                     {
                         client.stop();
+                        motorController.setRightSpeed(0);
                         ESP.restart();
                     }
                 }

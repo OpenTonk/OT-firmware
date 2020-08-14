@@ -5,6 +5,11 @@
 
 #include "MotorControl.h"
 
+MotorControl controller({
+  {4, 2},
+  {18, 19}
+});
+
 void setup() {
   Serial.begin(9600);
 
@@ -27,9 +32,10 @@ void setup() {
     ESP.restart();
   }
 
-  StartSocketServer();
+  StartSocketServer(controller);
 }
 
 void loop() {
   SocketLoop();
+  controller.loop();
 }

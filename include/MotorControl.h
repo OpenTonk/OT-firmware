@@ -3,34 +3,49 @@
 
 struct MotorPins
 {
-    struct RightPins
+    struct Motor
     {
         int forward;
         int reverse;
     };
 
-    struct LeftPins
+    Motor right;
+    Motor left;
+};
+
+struct MotorConfig
+{
+    struct MotorProps
     {
-        int forward;
-        int reverse;
+        float maxSpeed;
+        float minSpeed;
+        float accel;
+        float targetSpeed;
+        float currentSpeed;
     };
 
-    RightPins right;
-    LeftPins left;
+    MotorProps right;
+    MotorProps left;
 };
 
 class MotorControl
 {
 private:
     MotorPins pins;
-    int channel;
+    MotorConfig config;
     int frequency;
     int resolution;
+
+    int oldTime;
+    int currentTime;
+    float dt;
+    bool firstLoop;
 
 public:
     MotorControl(MotorPins pins);
     void setPins(MotorPins pins);
     void setRightSpeed(int speed);
+    void setLeftSpeed(int speed);
     void loop();
 };
 

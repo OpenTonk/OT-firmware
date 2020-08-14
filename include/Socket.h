@@ -1,7 +1,7 @@
 #ifndef Socket_h
 #define Socket_h
 
-bool StartSocketServer();
+bool StartSocketServer(MotorControl controller);
 
 void SocketLoop();
 
