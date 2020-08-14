@@ -10,7 +10,7 @@ MotorControl::MotorControl(MotorPins p)
 
     ledcSetup(channel, frequency, resolution);
 
-    setPins(p)
+    setPins(p);
 }
 
 void MotorControl::setPins(MotorPins p)

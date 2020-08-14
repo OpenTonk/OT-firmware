@@ -1,24 +1,23 @@
 #ifndef MotorControl_h
 #define MotorControl_h
 
-struct Right
-{
-    int forward;
-    int reverse;
-};
-
-struct Left
-{
-    int forward;
-    int reverse;
-};
-
 struct MotorPins
 {
-    Right right;
-    Left left;
-};
+    struct RightPins
+    {
+        int forward;
+        int reverse;
+    };
 
+    struct LeftPins
+    {
+        int forward;
+        int reverse;
+    };
+
+    RightPins right;
+    LeftPins left;
+};
 
 class MotorControl
 {
@@ -32,6 +31,7 @@ public:
     MotorControl(MotorPins pins);
     void setPins(MotorPins pins);
     void setRightSpeed(int speed);
+    void loop();
 };
 
 #endif
