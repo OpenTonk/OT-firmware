@@ -15,8 +15,8 @@ MotorControl::MotorControl(MotorPins p)
     resolution = 8;
 
     config = {
-        {100, -100, 10, 100, 0}, // right
-        {100, -100, 10, 100, 0}    // left
+        {100, -100, 10, 0, 0}, // right
+        {100, -100, 10, 0, 0}    // left
     };
 
     firstLoop = true;

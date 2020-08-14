@@ -8,7 +8,8 @@
 int port = 4200;
 int clientCount = 0;
 WiFiServer server(0);
-MotorControl motorController;
+MotorControl motorController({{4, 2},
+                              {18, 19}});
 
 bool StartSocketServer(MotorControl controller)
 {
@@ -52,7 +53,7 @@ void SocketLoop()
                         data[5] = '\0';
                     }
 
-                    char* msg = (char *)data;
+                    char *msg = (char *)data;
 
                     Serial.print("Client send: ");
                     Serial.print(sizeof(msg));
@@ -62,9 +63,32 @@ void SocketLoop()
                     {
                         client.stop();
                         motorController.setRightSpeed(0);
+                        motorController.setLeftSpeed(0);
                         ESP.restart();
                     }
+
+                    char n[] = {msg[2], msg[3], msg[4]};
+                    int speed = atoi(n);
+
+                    if (msg[0] == 'R')
+                    {
+                        if (msg[1] == '-')
+                        {
+                            speed = -speed;
+                        }
+                        motorController.setRightSpeed(speed);
+                    }
+
+                    if (msg[0] == 'L')
+                    {
+                        if (msg[1] == '-')
+                        {
+                            speed = -speed;
+                        }
+                        motorController.setLeftSpeed(speed);
+                    }
                 }
+                motorController.loop();
             }
         }
 
