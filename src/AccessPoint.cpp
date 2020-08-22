@@ -10,7 +10,7 @@ const char *password = "UltimateTonk";
 
 bool startAP()
 {
-    return WiFi.softAP(ssid, password);
+    return WiFi.softAP(ssid, password, 1, 0, 1);
 }
 
 IPAddress getIP()
