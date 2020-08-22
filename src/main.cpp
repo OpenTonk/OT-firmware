@@ -37,5 +37,4 @@ void setup() {
 
 void loop() {
   SocketLoop();
-  controller.loop();
 }
