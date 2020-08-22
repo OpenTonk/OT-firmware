@@ -1,20 +1,21 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include <WiFiUdp.h>
 
 #include "Socket.h"
 #include "MotorControl.h"
 
 int port = 4200;
 int clientCount = 0;
-WiFiServer server(0);
+WiFiUDP udp;
 MotorControl motorController({{4, 2},
                               {18, 19}});
 
 bool StartSocketServer(MotorControl controller)
 {
-    server.begin(port);
-    Serial.print("tcp server listening on ");
+    udp.begin(port);
+    Serial.print("udp server listening on ");
     Serial.println(port);
 
     motorController = controller;
@@ -24,75 +25,67 @@ bool StartSocketServer(MotorControl controller)
 
 void SocketLoop()
 {
-    WiFiClient client = server.available();
-    uint8_t data[5];
+    uint8_t data[4];
 
-    if (client)
+    int packetSize = udp.parsePacket();
+
+    if (packetSize)
     {
-        Serial.println("New client");
-        clientCount++;
+        int l = udp.read(data, 4);
 
-        if (clientCount > 1)
+        if (l < 4)
         {
-            client.stop();
+            data[l] = '\0';
         }
         else
         {
-            while (client.connected())
-            {
-                if (client.available())
-                {
-                    int l = client.read(data, 5);
-
-                    if (l < 5)
-                    {
-                        data[l] = '\0';
-                    }
-                    else
-                    {
-                        data[5] = '\0';
-                    }
-
-                    char *msg = (char *)data;
-
-                    Serial.print("Client send: ");
-                    Serial.print(sizeof(msg));
-                    Serial.println(msg);
-
-                    if (strcmp(msg, "stop") == 0)
-                    {
-                        client.stop();
-                        motorController.setRightSpeed(0);
-                        motorController.setLeftSpeed(0);
-                        ESP.restart();
-                    }
-
-                    char n[] = {msg[2], msg[3], msg[4]};
-                    int speed = atoi(n);
-
-                    if (msg[0] == 'R')
-                    {
-                        if (msg[1] == '-')
-                        {
-                            speed = -speed;
-                        }
-                        motorController.setRightSpeed(speed);
-                    }
-
-                    if (msg[0] == 'L')
-                    {
-                        if (msg[1] == '-')
-                        {
-                            speed = -speed;
-                        }
-                        motorController.setLeftSpeed(speed);
-                    }
-                }
-                motorController.loop();
-            }
+            data[4] = '\0';
         }
 
-        clientCount--;
-        Serial.println("Client disconnected");
+        char *msg = (char *)data;
+
+        //Serial.print("Client send: ");
+        //Serial.print(sizeof(msg));
+        //Serial.println(msg);
+
+        if (strcmp(msg, "stop") == 0)
+        {
+            motorController.setRightSpeed(0);
+            motorController.setLeftSpeed(0);
+            ESP.restart();
+        }
+
+        char n[] = {msg[2], msg[3]};
+        int speed = atoi(n);
+
+        if (speed == 99)
+        {
+            speed = 100;
+        }
+        
+
+        if (msg[0] == 'R')
+        {
+            if (msg[1] == '-')
+            {
+                speed = -speed;
+            }
+            motorController.setRightSpeed(speed);
+
+            Serial.print("Right motor: ");
+            Serial.println((float)speed / 100.0 * 255);
+        }
+
+        if (msg[0] == 'L')
+        {
+            if (msg[1] == '-')
+            {
+                speed = -speed;
+            }
+            motorController.setLeftSpeed(speed);
+            Serial.print("Left motor: ");
+            Serial.println((float)speed / 100.0 * 255);
+        }
     }
+    motorController.loop();
 }
