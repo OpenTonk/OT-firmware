@@ -58,7 +58,7 @@ void MotorControl::setRightSpeed(int speed)
     }
     else
     {
-        config.right.targetSpeed = speed;
+        config.right.targetSpeed = (float)speed;
     }
 }
 
@@ -74,7 +74,7 @@ void MotorControl::setLeftSpeed(int speed)
     }
     else
     {
-        config.left.targetSpeed = speed;
+        config.left.targetSpeed = (float)speed;
     }
 }
 
@@ -96,6 +96,7 @@ void MotorControl::loop()
     //
     // Right 
     //
+    /*
     if (config.right.currentSpeed < config.right.targetSpeed)
     {
         config.right.currentSpeed += dt * config.right.accel;
@@ -104,22 +105,27 @@ void MotorControl::loop()
     {
         config.right.currentSpeed -= dt * config.right.accel;
     }
+    */
+
+    config.right.currentSpeed = config.right.targetSpeed;
 
     if (config.right.currentSpeed > 0)
     {
         ledcWrite(RIGHT_REVERSE, 0);
-        ledcWrite(RIGHT_FORWARD, config.right.currentSpeed / 100 * 255);
+        ledcWrite(RIGHT_FORWARD, config.right.currentSpeed / 100.0 * 255.0);
     }
     else
     {
         ledcWrite(RIGHT_FORWARD, 0);
-        ledcWrite(RIGHT_REVERSE, config.right.currentSpeed / 100 * 255);
+        ledcWrite(RIGHT_REVERSE, -config.right.currentSpeed / 100.0 * 255.0);
     }
 
 
     //
     // Left 
     //
+
+    /*
     if (config.left.currentSpeed < config.left.targetSpeed)
     {
         config.left.currentSpeed += dt * config.left.accel;
@@ -128,20 +134,25 @@ void MotorControl::loop()
     {
         config.left.currentSpeed -= dt * config.left.accel;
     }
+    */
+
+    config.left.currentSpeed = config.left.targetSpeed;
 
     if (config.left.currentSpeed > 0)
     {
         ledcWrite(LEFT_REVERSE, 0);
-        ledcWrite(LEFT_FORWARD, config.left.currentSpeed / 100 * 255);
+        ledcWrite(LEFT_FORWARD, config.left.currentSpeed / 100.0 * 255);
     }
     else
     {
         ledcWrite(LEFT_FORWARD, 0);
-        ledcWrite(LEFT_REVERSE, config.left.currentSpeed / 100 * 255);
+        ledcWrite(LEFT_REVERSE, -config.left.currentSpeed / 100.0 * 255);
     }
+    
 
-    Serial.print("Left: ");
-    Serial.print(config.left.currentSpeed / 100 * 255);
-    Serial.print(" | Right: ");
-    Serial.println(config.right.currentSpeed / 100 * 255);
+    //Serial.print("Left: ");
+    //Serial.print(ledcRead(LEFT_FORWARD));
+    //Serial.print(" | Right: ");
+    //Serial.println(ledcRead(RIGHT_FORWARD));
+    //delay(15);
 }
