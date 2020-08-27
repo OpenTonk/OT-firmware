@@ -7,23 +7,21 @@
 #include "MotorControl.h"
 
 int port = 4200;
-int clientCount = 0;
-WiFiUDP udp;
-MotorControl motorController({{4, 2},
-                              {18, 19}});
 
-bool StartSocketServer(MotorControl controller)
+Socket::Socket(MotorControl *controller)
+{
+    motorController = controller;
+}
+
+void Socket::start()
 {
     udp.begin(port);
     Serial.print("udp server listening on ");
     Serial.println(port);
-
-    motorController = controller;
-
-    return true;
+    clientCount = 0;
 }
 
-void SocketLoop()
+void Socket::Loop()
 {
     uint8_t data[4];
 
@@ -46,12 +44,12 @@ void SocketLoop()
 
         //Serial.print("Client send: ");
         //Serial.print(sizeof(msg));
-        //Serial.println(msg);
+        Serial.println(msg);
 
         if (strcmp(msg, "stop") == 0)
         {
-            motorController.setRightSpeed(0);
-            motorController.setLeftSpeed(0);
+            motorController->setRightSpeed(0);
+            motorController->setLeftSpeed(0);
             ESP.restart();
         }
 
@@ -62,7 +60,6 @@ void SocketLoop()
         {
             speed = 100;
         }
-        
 
         if (msg[0] == 'R')
         {
@@ -70,7 +67,7 @@ void SocketLoop()
             {
                 speed = -speed;
             }
-            motorController.setRightSpeed(speed);
+            motorController->setRightSpeed(speed);
 
             Serial.print("Right motor: ");
             Serial.println((float)speed / 100.0 * 255);
@@ -82,10 +79,10 @@ void SocketLoop()
             {
                 speed = -speed;
             }
-            motorController.setLeftSpeed(speed);
+            motorController->setLeftSpeed(speed);
             Serial.print("Left motor: ");
             Serial.println((float)speed / 100.0 * 255);
         }
     }
-    motorController.loop();
+    //motorController.loop();
 }

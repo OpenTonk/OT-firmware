@@ -1,10 +1,21 @@
 #ifndef Socket_h
 #define Socket_h
 
+#include <WiFiUdp.h>
 #include "MotorControl.h"
 
-bool StartSocketServer(MotorControl controller);
+class Socket
+{
+private:
+    MotorControl* motorController;
+    int clientCount;
+    WiFiUDP udp;
 
-void SocketLoop();
+public:
+    Socket(MotorControl* controller);
+    void start();
+    void Loop();
+};
+
 
 #endif

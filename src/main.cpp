@@ -10,6 +10,8 @@ MotorControl controller({
   {18, 19}
 });
 
+Socket socket(&controller);
+
 void setup() {
   Serial.begin(9600);
 
@@ -32,9 +34,10 @@ void setup() {
     ESP.restart();
   }
 
-  StartSocketServer(controller);
+  socket.start();
 }
 
 void loop() {
-  SocketLoop();
+  socket.Loop();
+  controller.loop();
 }

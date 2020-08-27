@@ -8,7 +8,6 @@
 #define LEFT_FORWARD 2
 #define LEFT_REVERSE 3
 
-
 MotorControl::MotorControl(MotorPins p)
 {
     frequency = 50000;
@@ -76,6 +75,13 @@ void MotorControl::setLeftSpeed(int speed)
     {
         config.left.targetSpeed = (float)speed;
     }
+}
+
+void threadLoop(void* parameter) {
+    for (;;)
+    {
+        delay(50);
+    }   
 }
 
 void MotorControl::loop()
@@ -152,7 +158,7 @@ void MotorControl::loop()
 
     //Serial.print("Left: ");
     //Serial.print(ledcRead(LEFT_FORWARD));
-    //Serial.print(" | Right: ");
-    //Serial.println(ledcRead(RIGHT_FORWARD));
+    Serial.print(" | Right: ");
+    Serial.println(ledcRead(RIGHT_FORWARD));
     //delay(15);
 }
