@@ -14,7 +14,7 @@ private:
 public:
     Socket(MotorControl* controller);
     void start();
-    void Loop();
+    void loop();
 };
 
 

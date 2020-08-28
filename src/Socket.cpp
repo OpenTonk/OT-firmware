@@ -21,7 +21,7 @@ void Socket::start()
     clientCount = 0;
 }
 
-void Socket::Loop()
+void Socket::loop()
 {
     uint8_t data[4];
 

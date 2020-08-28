@@ -158,7 +158,7 @@ void MotorControl::loop()
 
     //Serial.print("Left: ");
     //Serial.print(ledcRead(LEFT_FORWARD));
-    Serial.print(" | Right: ");
-    Serial.println(ledcRead(RIGHT_FORWARD));
+    //Serial.print(" | Right: ");
+    //Serial.println(ledcRead(RIGHT_FORWARD));
     //delay(15);
 }
