@@ -15,7 +15,7 @@ Socket::Socket(MotorControl *controller)
 
 void Socket::start()
 {
-    udp.begin(port);
+    udp.begin(port); // start udp socket server
     Serial.print("udp server listening on ");
     Serial.println(port);
     clientCount = 0;
@@ -23,13 +23,14 @@ void Socket::start()
 
 void Socket::loop()
 {
-    uint8_t data[4];
+    uint8_t data[4]; // var to store recieved data
 
     int packetSize = udp.parsePacket();
-
+    
+    // check if we recieved something
     if (packetSize)
     {
-        int l = udp.read(data, 4);
+        int l = udp.read(data, 4); // read 4 bytes
 
         if (l < 4)
         {
@@ -40,7 +41,7 @@ void Socket::loop()
             data[4] = '\0';
         }
 
-        char *msg = (char *)data;
+        char *msg = (char *)data; // convert to char array
 
         //Serial.print("Client send: ");
         //Serial.print(sizeof(msg));
